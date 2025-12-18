@@ -86,7 +86,7 @@ Start FastAPI Backend
 uvicorn api:app --reload
 
 
-API Docs: http://127.0.0.1:8000/docs
+API Docs: https://shl-assessment-recommendation-system-462r.onrender.com/docs
 
 Start Streamlit App
 streamlit run app.py
