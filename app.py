@@ -2,17 +2,15 @@ import streamlit as st
 import pandas as pd
 import requests
 
-API_URL = "https://shl-assessment-recommendation-system-462r.onrender.com/recommend"
-
 st.set_page_config(
     page_title="SHL Assessment Recommendation System",
     layout="centered"
 )
+API_URL = "https://shl-assessment-recommendation-system-462r.onrender.com/recommend"
 
 st.title("SHL Assessment Recommendation System")
-
 st.write(
-    "Enter a job description or requirement text to receive the most relevant "
+    "Enter a job description or requirement text to get the most relevant "
     "SHL assessment recommendations."
 )
 
@@ -23,18 +21,18 @@ query = st.text_area(
 )
 
 top_k = st.number_input(
-    "Number of Recommendations",
+    "Number of Recommendations (Min 5, Max 10)",
     min_value=5,
     max_value=10,
     value=5,
     step=1
 )
 
-if st.button(" Get Recommendations"):
+if st.button("Get Recommendations"):
     if not query.strip():
         st.warning("Please enter a job description.")
     else:
-        with st.spinner("Fetching recommendations..."):
+        with st.spinner("Generating recommendations..."):
             try:
                 response = requests.post(
                     API_URL,
@@ -54,13 +52,37 @@ if st.button(" Get Recommendations"):
                         st.info("No recommendations found.")
                     else:
                         df = pd.DataFrame(results)
+                        
+                        df = df.dropna(axis=1, how="all")
+                        required_cols = [
+                            "assessment_name",
+                            "test_type",
+                            "description",
+                            "url",
+                            "score"
+                        ]
+                        df = df[[c for c in required_cols if c in df.columns]]
+
+                        df.rename(columns={
+                            "assessment_name": "Assessment",
+                            "test_type": "Test Type",
+                            "description": "Description",
+                            "url": "URL",
+                            "score": "Relevance Score"
+                        }, inplace=True)
+
+                        if "Relevance Score" in df.columns:
+                            df = df.sort_values(
+                                by="Relevance Score",
+                                ascending=False
+                            )
 
                         st.subheader("Recommended SHL Assessments")
                         st.dataframe(df, use_container_width=True)
 
                         csv = df.to_csv(index=False).encode("utf-8")
                         st.download_button(
-                            label=" Download as CSV",
+                            label="📥 Download as CSV",
                             data=csv,
                             file_name="shl_recommendations.csv",
                             mime="text/csv"
@@ -68,7 +90,3 @@ if st.button(" Get Recommendations"):
 
             except Exception as e:
                 st.error(f"Failed to connect to API: {str(e)}")
-
-
-st.markdown("---")
-st.caption("Powered by Semantic Similarity & SHL Assessment Catalog")
