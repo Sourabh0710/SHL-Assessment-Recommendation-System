@@ -1,6 +1,8 @@
 import streamlit as st
 import pandas as pd
-from recommender import SHLRecommender
+import requests
+
+API_URL = "https://shl-assessment-recommendation-system-462r.onrender.com/recommend"
 
 st.set_page_config(
     page_title="SHL Assessment Recommendation System",
@@ -8,16 +10,11 @@ st.set_page_config(
 )
 
 st.title("SHL Assessment Recommendation System")
+
 st.write(
-    "Enter a job description or requirement text to get the most relevant "
-    "SHL assessment recommendations using Generative AI."
+    "Enter a job description or requirement text to receive the most relevant "
+    "SHL assessment recommendations."
 )
-
-@st.cache_resource
-def load_recommender():
-    return SHLRecommender("shl_catalog.csv")
-
-recommender = load_recommender()
 
 query = st.text_area(
     "Job Description / Requirement Text",
@@ -26,7 +23,7 @@ query = st.text_area(
 )
 
 top_k = st.number_input(
-    "Number of Recommendations (Min 5, Max 10)",
+    "Number of Recommendations",
     min_value=5,
     max_value=10,
     value=5,
@@ -37,24 +34,41 @@ if st.button(" Get Recommendations"):
     if not query.strip():
         st.warning("Please enter a job description.")
     else:
-        with st.spinner("Generating recommendations..."):
-            results = recommender.recommend(query, top_k)
-            if results is None or (hasattr(results, "empty") and results.empty):
-                st.info("No recommendations found.")
-            else:
-                df = pd.DataFrame(results)
+        with st.spinner("Fetching recommendations..."):
+            try:
+                response = requests.post(
+                    API_URL,
+                    json={
+                        "text": query,
+                        "max_results": top_k
+                    },
+                    timeout=30
+                )
 
+                if response.status_code != 200:
+                    st.error(f"API Error: {response.text}")
+                else:
+                    results = response.json()
 
-            st.subheader("Recommended SHL Assessments")
-            st.dataframe(df, use_container_width=True)
+                    if not results:
+                        st.info("No recommendations found.")
+                    else:
+                        df = pd.DataFrame(results)
 
-            csv = df.to_csv(index=False).encode("utf-8")
-            st.download_button(
-                label="Download as CSV",
-                data=csv,
-                file_name="shl_recommendations.csv",
-                mime="text/csv"
-            )
+                        st.subheader("Recommended SHL Assessments")
+                        st.dataframe(df, use_container_width=True)
+
+                        csv = df.to_csv(index=False).encode("utf-8")
+                        st.download_button(
+                            label=" Download as CSV",
+                            data=csv,
+                            file_name="shl_recommendations.csv",
+                            mime="text/csv"
+                        )
+
+            except Exception as e:
+                st.error(f"Failed to connect to API: {str(e)}")
+
 
 st.markdown("---")
-st.caption("Built using Generative AI (Transformer-based semantic similarity)")
+st.caption("Powered by Semantic Similarity & SHL Assessment Catalog")
