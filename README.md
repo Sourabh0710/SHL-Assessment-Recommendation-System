@@ -25,7 +25,8 @@ This approach ensures efficiency, scalability, and strong semantic performance.
 
 ##  System Architecture
 
-<img width="798" height="911" alt="Screenshot 2025-12-18 161755" src="https://github.com/user-attachments/assets/4ff74a81-2b6c-4313-9f54-dc40b0cd3bf5" />
+<img width="502" height="593" alt="image" src="https://github.com/user-attachments/assets/27d77676-56a9-40b3-a42f-56d7e7d98551" />
+
 
 
 ### Flow Explanation
