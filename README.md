@@ -91,7 +91,7 @@ API Docs: https://shl-assessment-recommendation-system-462r.onrender.com/docs
 Start Streamlit App
 streamlit run app.py
 
-App URL: http://localhost:8501
+App URL: https://shl-assessment-recommendation-system-25.streamlit.app/
 
 ---
 ## Data Validation & Cleaning
