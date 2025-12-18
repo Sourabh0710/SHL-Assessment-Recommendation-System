@@ -71,7 +71,7 @@ This approach ensures efficiency, scalability, and strong semantic performance.
 ---
 ## Setup & Installation
 ### 1️ Clone the Repository
-git clone https://github.com/Sourabh0710/SHL-Assessment-Recommendation (for streamlit) & https://github.com/Sourabh0710/SHL-Assessment-Recommendation-System-Backend/tree/main ( for backend) 
+git clone https://github.com/Sourabh0710/SHL-Assessment-Recommendation-System (for streamlit) & https://github.com/Sourabh0710/SHL-Assessment-Recommendation-System-Backend/tree/main ( for backend) 
 cd SHL-Assessment-Recommendation
 
 ### 2️ Create Virtual Environment (Optional)
