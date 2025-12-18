@@ -1,8 +1,7 @@
 # SHL-Assessment-Recommendation-System
 
 Generative AI powered semantic recommendation engine
-<p align="center"> <img src="https://img.shields.io/badge/LLM-Sentence--BERT-blue" /> <img src="https://img.shields.io/badge/API-FastAPI-green" /> <img src="https://img.shields.io/badge/UI-Streamlit-red" /> <img src="https://img.shields.io/badge/Status-Ready%20for%20Submission-brightgreen" /> </p>
----
+
 
 ## Overview
 
