@@ -39,11 +39,11 @@ if st.button(" Get Recommendations"):
     else:
         with st.spinner("Generating recommendations..."):
             results = recommender.recommend(query, top_k)
+            if results is None or (hasattr(results, "empty") and results.empty):
+                st.info("No recommendations found.")
+            else:
+                df = pd.DataFrame(results)
 
-        if not results:
-            st.info("No recommendations found.")
-        else:
-            df = pd.DataFrame(results)
 
             st.subheader("Recommended SHL Assessments")
             st.dataframe(df, use_container_width=True)
