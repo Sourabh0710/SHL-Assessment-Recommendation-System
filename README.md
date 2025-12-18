@@ -121,7 +121,6 @@ Ensures dataset consistency
 - JSON-based responses
 ---
 ## Project Structure
-### SHL Internship Assessment
 
 - app.py : Streamlit UI
 - api.py : FastAPI REST API
