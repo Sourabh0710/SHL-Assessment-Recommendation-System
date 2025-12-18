@@ -1,4 +1,5 @@
 import streamlit as st
+import pandas as pd
 from recommender import SHLRecommender
 
 st.set_page_config(
@@ -8,10 +9,9 @@ st.set_page_config(
 
 st.title("SHL Assessment Recommendation System")
 st.write(
-    "Enter a job description or hiring requirement to receive "
-    "recommended SHL assessments."
+    "Enter a job description or requirement text to get the most relevant "
+    "SHL assessment recommendations using Generative AI."
 )
-
 
 @st.cache_resource
 def load_recommender():
@@ -19,42 +19,42 @@ def load_recommender():
 
 recommender = load_recommender()
 
-
 query = st.text_area(
-    "Job Description / Requirement",
+    "Job Description / Requirement Text",
     height=150,
-    placeholder="Example: Looking for a Java backend developer with strong OOP and problem-solving skills"
+    placeholder="e.g. Looking for a Python developer with strong problem solving skills..."
 )
 
 top_k = st.number_input(
-    "Number of recommendations (min 5, max 10)",
+    "Number of Recommendations (Min 5, Max 10)",
     min_value=5,
     max_value=10,
-    value=10,
+    value=5,
     step=1
 )
 
-
-if st.button("Get Recommendations"):
-    if query.strip() == "":
+if st.button(" Get Recommendations"):
+    if not query.strip():
         st.warning("Please enter a job description.")
     else:
-        results = recommender.recommend(query, top_k)
+        with st.spinner("Generating recommendations..."):
+            results = recommender.recommend(query, top_k)
 
-        st.success(f"Top {top_k} Recommended Assessments")
+        if not results:
+            st.info("No recommendations found.")
+        else:
+            df = pd.DataFrame(results)
 
-        # Display results (without score)
-        st.dataframe(
-            results.drop(columns=["score"]),
-            use_container_width=True
-        )
+            st.subheader("Recommended SHL Assessments")
+            st.dataframe(df, use_container_width=True)
 
+            csv = df.to_csv(index=False).encode("utf-8")
+            st.download_button(
+                label="Download as CSV",
+                data=csv,
+                file_name="shl_recommendations.csv",
+                mime="text/csv"
+            )
 
-        csv_data = results.drop(columns=["score"]).to_csv(index=False)
-
-        st.download_button(
-            label="⬇ Download Predictions CSV",
-            data=csv_data,
-            file_name="predictions.csv",
-            mime="text/csv"
-        )
+st.markdown("---")
+st.caption("Built using Generative AI (Transformer-based semantic similarity)")
